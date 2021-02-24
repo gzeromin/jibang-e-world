@@ -1,52 +1,33 @@
-import React, { useRef, useState, memo } from 'react';
-import {Link} from 'react-router-dom';
+import React, { useRef, memo } from 'react';
+import {Link, useHistory} from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import firebase from '../../firebase';
-import md5 from 'md5';
-import { Loading } from '../../store';
+import { useDispatch } from 'react-redux';
+import { registerUser } from '../../redux/actions/user_action';
 
 function RegisterPage() {
+  const dispatch = useDispatch();
+  let history = useHistory();
+
   const {register, watch, errors, handleSubmit } = useForm();
-  const [errorFromSubmit, setErrorFromSubmit] = useState('');
   const password = useRef();
   password.current = watch('password');
 
-  console.log('register');
   const onSubmit = async (data) => {
-    try {
-      Loading.setIsLoading(true);
-      let createdUser = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(data.email, data.password);
-        console.log('createdUser', createdUser);
-
-      await createdUser.user.updateProfile({
-        displayName: data.name,
-        photoURL: `http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
-      });
-
-      // save in firebase database
-      await firebase.database().ref('users').child(createdUser.user.uid).set({
-        name: createdUser.user.displayName,
-        image: createdUser.user.photoURL
-      });
-    } catch (error) {
-      console.log(error);
-      setErrorFromSubmit(error.message);
-      setTimeout(() => {
-        setErrorFromSubmit('');
-      }, 5000);
-    } finally {
-      Loading.setIsLoading(false);
-    }
+    dispatch(registerUser(data)).then(res => {
+      if (res.type.indexOf('failure') === -1) {
+        history.push('/');
+      }
+    })
   }
 
   return (
     <div
       className='auth-wrapper'
     >
-      <div className='title'>
-        Register
+      <div style={{ textAlign: 'center' }}>
+        <h3>
+          Happy Stamp
+        </h3>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label>Email</label>
@@ -71,7 +52,7 @@ function RegisterPage() {
           ref={register({ required: true, minLength: 6 })}
         />
         {errors.password && errors.password.type === 'required' && <p>This password field is required</p>}
-        {errors.password && errors.password.type === 'maxLength' && <p>Password must have at least 6 characters</p>}
+        {errors.password && errors.password.type === 'minLength' && <p>Password must have at least 6 characters</p>}
         <label>Password Confirm</label>
         <input
           name='password_confirm'
@@ -85,8 +66,7 @@ function RegisterPage() {
         {errors.password_confirm && errors.password_confirm.type === 'required' && <p>This password confirm field is required</p>}
         {errors.password_confirm && errors.password_confirm.type === 'maxLength' && <p>The passwords do not match</p>}
 
-        {errorFromSubmit && <p> { errorFromSubmit } </p>}
-        <input type='submit' />
+        <input type='submit' value='Register' />
         <Link
           style={{ color: 'gray', textDecoration: 'none'}}
           to='/login'

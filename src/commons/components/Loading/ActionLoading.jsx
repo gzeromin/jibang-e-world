@@ -9,6 +9,7 @@ function ActionLoading() {
       <div className='overlay'></div>
       <Spinner 
         className='spinner'
+        variant='primary'
         animation="border"
       />
     </div>

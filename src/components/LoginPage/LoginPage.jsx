@@ -1,33 +1,29 @@
-import React, { useState } from 'react';
-import {Link} from 'react-router-dom';
+import React from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import firebase from '../../firebase';
-import { Loading } from '../../store';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../../redux/actions/user_action';
+import { GiClover } from 'react-icons/gi';
 
 function LoginPage() {
+  const dispatch = useDispatch();
+  let history = useHistory();
   const {register, errors, handleSubmit } = useForm();
-  const [errorFromSubmit, setErrorFromSubmit] = useState('');
 
   const onSubmit = async (data) => {
-    try {
-      Loading.setIsLoading(true);
-      await firebase.auth().signInWithEmailAndPassword(data.email, data.password);
-    } catch (error) {
-      setErrorFromSubmit(error.message);
-      setTimeout(() => {
-        setErrorFromSubmit('');
-      }, 5000);
-    } finally {
-      Loading.setIsLoading(false);
-    }
+    dispatch(loginUser(data)).then(res => {
+      if (res.type.indexOf('failure') === -1) {
+        history.push('/');
+      }
+    })
   }
 
   return (
     <div
       className='auth-wrapper'
     >
-      <div className='title'>
-        Login
+      <div style={{ textAlign: 'center' }}>
+        <h3><GiClover style={{ color: 'green' }}/></h3>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label>Email</label>
@@ -45,9 +41,8 @@ function LoginPage() {
           ref={register({ required: true, minLength: 6 })}
         />
         {errors.password && errors.password.type === 'required' && <p>This password field is required</p>}
-        {errors.password && errors.password.type === 'maxLength' && <p>Password must have at least 6 characters</p>}
-        {errorFromSubmit && <p> { errorFromSubmit } </p>}
-        <input type='submit' />
+        {errors.password && errors.password.type === 'minLength' && <p>Password must have at least 6 characters</p>}
+        <input type='submit' value='Login'/>
         <Link
           style={{ color: 'gray', textDecoration: 'none'}}
           to='/register'

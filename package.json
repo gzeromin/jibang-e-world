@@ -9,6 +9,7 @@
     "bootstrap": "^4.6.0",
     "firebase": "^8.2.7",
     "md5": "^2.3.0",
+    "mime-types": "^2.1.29",
     "mobx": "^6.1.7",
     "mobx-react": "^7.1.0",
     "node-sass": "^5.0.0",

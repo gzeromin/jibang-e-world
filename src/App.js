@@ -1,34 +1,44 @@
 import {
   Switch,
   Route,
+  useHistory,
 } from "react-router-dom";
 import LandingPage from './components/LandingPage/LandingPage';
 import LoginPage from './components/LoginPage/LoginPage';
 import RegisterPage from './components/RegisterPage/RegisterPage';
-import Auth from "./hoc/auth";
-import ActionModal from './commons/components/Modal/ActionModal';
+import ActionDialog from './commons/components/Modal/ActionDialog';
 import ActionLoading from './commons/components/Loading/ActionLoading';
-
-import { Loading, Dialog } from './store';
-import Button from 'react-bootstrap/Button';
+import { useEffect } from "react";
+import firebase from './firebase';
+import { useDispatch } from "react-redux";
+import { setUser, clearUser } from './redux/actions/user_action';
 
 function App() {
   console.log('app');
+  let history = useHistory();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      //logined
+      if(user) {
+        dispatch(setUser(user));
+        history.push('/');
+      } else {
+        dispatch(clearUser());
+        history.push('/login');
+      }
+    });
+  }, []);
 
   return (
     <>
       <ActionLoading />
-      <Button variant="primary" onClick={Dialog.openDialog}>
-        Launch vertically centered modal
-      </Button>
-      <Button variant="primary" onClick={() => Loading.setIsLoading(!Loading.isLoading)}>
-        SpinTest
-      </Button>
-      <ActionModal />
+      <ActionDialog />
       <Switch>
-        <Route exact path="/" component={Auth(LandingPage, true)} />
-        <Route path="/login" component={Auth(LoginPage, false)} />
-        <Route path="/register" component={Auth(RegisterPage, false)} />
+        <Route exact path="/" component={LandingPage} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/register" component={RegisterPage} />
       </Switch>
     </>
   );
