@@ -102,14 +102,12 @@ export function uploadPhoto(file, metadata) {
       await firebase.auth().currentUser.updateProfile({
         photoURL: downloadURL
       });
-
       dispatch({
         type: UPLOAD_PHOTO,
         payload: downloadURL
       });
-
       await firebase.database().ref('users')
-        .child(user.uid)
+        .child(userData.uid)
         .update({ image: downloadURL });
     } catch (error) {
       Dialog.openDialog(Dialog.DANGER, null, error.message);

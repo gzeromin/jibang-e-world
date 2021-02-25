@@ -48,7 +48,7 @@ function UserPanel() {
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <Dropdown.Item onClick={handleOpenImageRef}>
-              Change profile photo
+              change profile photo
             </Dropdown.Item>
             <Dropdown.Item onClick={handleLogout}>
               logout
