@@ -44,7 +44,7 @@ export class ChatRooms extends Component {
 
   addChatRoomsListeners = () => {
     let chatRoomsArray = [];
-    this.state.chatRoomsRef.on('child_changed', DataSnapshot => {
+    this.state.chatRoomsRef.on('child_added', DataSnapshot => {
       chatRoomsArray.push(DataSnapshot.val());
       this.setState(
         { chatRooms: chatRoomsArray },
@@ -65,7 +65,7 @@ export class ChatRooms extends Component {
   }
 
   addChatRoom = async () => {
-    const key = (await this.state.chatRoomsRef.push()).key;
+    const key = this.state.chatRoomsRef.push().key;
     const { name, description } = this.state;
     const { user } = this.props;
     const newChatRoom = {
@@ -98,7 +98,7 @@ export class ChatRooms extends Component {
     this.setState({ activeChatRoomId: room.id });
   }
 
-  renderChatRooms = (chatRooms) => {
+  renderChatRooms = (chatRooms) =>
     chatRooms.length > 0 &&
     chatRooms.map(room => (
       <li
@@ -112,7 +112,6 @@ export class ChatRooms extends Component {
         # {room.name}
       </li>
     ))
-  }
 
   render() {
     return (
