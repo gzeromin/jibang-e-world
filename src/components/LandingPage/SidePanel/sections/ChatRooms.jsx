@@ -37,7 +37,7 @@ export class ChatRooms extends Component {
     return (
       <div>
         <div className='sections-title'>
-          <FaRegSmileWink style={{ marginRight: 3 }} />
+          <FaRegSmileWink className='sections-title-prefix' />
           CHAT ROOMS { ' ' } (1)
 
           <FaPlus 

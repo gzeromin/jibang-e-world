@@ -29,7 +29,7 @@ function UserPanel() {
     <div>
       {/* Logo */}
       <h3>
-        <GiClover/> {' '}Happy Stamp
+        <GiClover/> {' '}
       </h3>
 
       <div style={{ display: 'flex', marginBottom: '1rem' }}>

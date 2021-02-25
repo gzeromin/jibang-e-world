@@ -1,6 +1,4 @@
 import {
-  LOGIN_USER, 
-  REGISTER_USER, 
   SET_USER,
   CLEAR_USER,
   UPLOAD_PHOTO
@@ -13,10 +11,6 @@ const initialUserState = {
 export default function (state = initialUserState, action) {
   
   switch(action.type) {
-    case LOGIN_USER:
-      return { ...state, userData: action.payload };
-    case REGISTER_USER:
-      return { ...state, userData: action.payload };
     case SET_USER:
       return { ...state, userData: action.payload };
     case CLEAR_USER:

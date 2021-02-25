@@ -20,11 +20,12 @@ function App() {
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
-      //logined
       if(user) {
+        //logined
         dispatch(setUser(user));
         history.push('/');
       } else {
+        //not logined
         dispatch(clearUser());
         history.push('/login');
       }

@@ -23,7 +23,7 @@ function LoginPage() {
       className='auth-wrapper'
     >
       <div style={{ textAlign: 'center' }}>
-        <h3><GiClover style={{ color: 'green' }}/></h3>
+        <h3><GiClover style={{ color: '#28a745' }}/></h3>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label>Email</label>
