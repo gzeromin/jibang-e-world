@@ -105,7 +105,8 @@ export class ChatRooms extends Component {
         key={room.id}
         style={{
           backgroundColor: room.id === this.state.activeChatRoomId &&
-            '#ffffff45'
+            '#ffffff45',
+          cursor: 'pointer'
         }}
         onClick={() => this.changeChatRoom(room)}
       >

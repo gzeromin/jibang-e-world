@@ -51,14 +51,15 @@ function MessageForm() {
           />
         </Form.Group>
       </Form>
-      {
-        !(percentage === 0 || percentage === 100) &&
-        <ProgressBar
-          variant='warning'
-          label={`${percentage}%`}
-          now={percentage}
-        />
-      }
+      <ProgressBar
+        variant='success'
+        style={{ 
+          backgroundColor: !(percentage === 0 || percentage === 100) ?
+            '' : 'transparent'
+        }}
+        label={`${percentage}%`}
+        now={percentage}
+      />
       <div>
         {errors.map(errorMsg => (
           <p
