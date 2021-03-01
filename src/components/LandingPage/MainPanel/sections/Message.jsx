@@ -1,12 +1,12 @@
 import React from 'react';
-import { Media } from 'react-bootstrap';
-import { mockComponent } from 'react-dom/test-utils';
+import Media from 'react-bootstrap/Media';
+import moment from 'moment';
 
 function Message({ message, user }) {
 
-  const timeFromNow = timestamp => mockComponent(timestamp).fromNow();
+  const timeFromNow = timestamp => moment(timestamp).fromNow();
   const isImage = message => {
-
+    return message.hasOwnProperty('image') && !message.hasOwnProperty('content');
   }
   const isMessageMine = (message, user) => {
     if(user) {

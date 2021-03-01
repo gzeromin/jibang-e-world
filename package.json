@@ -12,6 +12,7 @@
     "mime-types": "^2.1.29",
     "mobx": "^6.1.7",
     "mobx-react": "^7.1.0",
+    "moment": "^2.29.1",
     "node-sass": "^5.0.0",
     "react": "^17.0.1",
     "react-bootstrap": "^1.5.0",
