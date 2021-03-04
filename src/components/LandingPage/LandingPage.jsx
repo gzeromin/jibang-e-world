@@ -5,12 +5,15 @@ import { useSelector } from 'react-redux';
 
 function LandingPage() {
   const chatRoom = useSelector(state => state.chatRoom.currentChatRoom);
+  const user = useSelector(state => state.user.userData);
 
   return (
     <div className='landing'>
-      <SidePanel />
+      <SidePanel
+        key={user ? user.uid : 'side'}
+      />
       <MainPanel
-        key={chatRoom ? chatRoom.id : 'mainPanel'}
+        key={chatRoom ? chatRoom.id : 'main'}
       />
     </div>
   )

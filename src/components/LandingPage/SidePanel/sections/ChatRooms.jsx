@@ -31,6 +31,9 @@ export class ChatRooms extends Component {
 
   componentWillUnmount() {
     this.state.chatRoomsRef.off();
+    this.state.chatRooms.forEach(chatRoom => {
+      this.state.messageRef.child(chatRoom.id).off();
+    });
   }
 
   setFirstChatRoom = () => {
@@ -50,7 +53,45 @@ export class ChatRooms extends Component {
         { chatRooms: chatRoomsArray },
         () => this.setFirstChatRoom()
       );
+      this.addNotificationListener(DataSnapshot.key);
     })
+  }
+
+  addNotificationListener = (chatRoomId) => {
+    this.state.messageRef.child(chatRoomId).on('value', DataSnapshot => {
+      if (this.props.chatRoom) {
+        this.handleNotification(
+          chatRoomId,
+          this.props.chatRoom.id,
+          this.state.notifications,
+          DataSnapshot
+        )
+      }
+    })
+  }
+
+  handleNotification = (chatRoomId, currentChatRoomId, notifications, DataSnapshot) => {
+    let lastTotal = 0;
+
+    let index = notifications.findIndex(notification => notification.id === chatRoomId);
+    if (index === -1) {
+      notifications.push({
+        id: chatRoomId,
+        total: DataSnapshot.numChildren(),
+        lastKnownTotal: DataSnapshot.numChildren(),
+        count: 0
+      });
+    } else {
+      if (chatRoomId !== currentChatRoomId) {
+        lastTotal = notifications[index].lastKnownTotal;
+
+        if(DataSnapshot.numChildren() - lastTotal > 0) {
+          notifications[index].count = DataSnapshot.numChildren() - lastTotal;
+        }
+      }
+      notifications[index].total = DataSnapshot.numChildren();
+    }
+    this.setState({ notifications });
   }
 
   handleShow = () => this.setState({ show: true });
@@ -96,6 +137,32 @@ export class ChatRooms extends Component {
     this.props.dispatch(setCurrentChatRoom(room));
     this.props.dispatch(setPrivateChatRoom(false));
     this.setState({ activeChatRoomId: room.id });
+    this.clearNotifications(room);
+  }
+
+  clearNotifications = (currentChatRoom) => {
+    let index = this.state.notifications.findIndex(
+      notification => notification.id === currentChatRoom.id
+    );
+    if (index !== -1) {
+      let updatedNotifications = [...this.state.notifications];
+      updatedNotifications[index].lastKnownTotal = this.state.notifications[index].total;
+      updatedNotifications[index].count = 0;
+      this.setState({ notifications: updatedNotifications });
+    }
+  }
+
+  getNotificationCount = (room) => {
+    //get new message count of chatRoom
+    let count = 0;
+
+    this.state.notifications.forEach(notification => {
+      if (notification.id === room.id) {
+        count = notification.count;
+      }
+    });
+
+    if (count > 0) return count;
   }
 
   renderChatRooms = (chatRooms) =>
@@ -111,6 +178,9 @@ export class ChatRooms extends Component {
         onClick={() => this.changeChatRoom(room)}
       >
         # {room.name}
+        <Badge style={{ float: 'right', marginTop: '4px' }} variant='success'>
+          {this.getNotificationCount(room)}
+        </Badge>
       </li>
     ))
 

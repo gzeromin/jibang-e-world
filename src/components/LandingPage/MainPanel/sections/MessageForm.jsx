@@ -14,6 +14,7 @@ function MessageForm() {
   const messagesRef = firebase.database().ref('messages');
   const inputOpenImageRef = useRef();
   const storageRef = firebase.storage().ref();
+  const typingRef = firebase.database().ref('typing');
   const isPrivateChatRoom = useSelector(state => state.chatRoom.isPrivateChatRoom);
   
   const handleChange = (event) => {
@@ -46,7 +47,9 @@ function MessageForm() {
     // save message at firebase
     try {
       await messagesRef.child(chatRoom.id).push().set(createMessage());
-      //typingRef.child(chatRoom.id).child(user.uid).remove();
+      
+      typingRef.child(chatRoom.id).child(user.uid).remove();
+      
       setContent('');
       setErrors([]);
     } catch (error) {
@@ -65,13 +68,17 @@ function MessageForm() {
   }
 
   const getPath = () => {
-
+    if (isPrivateChatRoom) {
+      return `message/private/${chatRoom.id}`;
+    } else {
+      return `message/public`;
+    }
   }
 
   const handleUploadImage = (event) => {
     const file = event.target.files[0];
     if(!file) return;
-    const filePath = `/message/public/${file.name}`;
+    const filePath = `${getPath()}/${file.name}`;
     const metadata = { contentType: mime.lookup(file.name) };
     setLoading(true);
     try {
@@ -119,11 +126,33 @@ function MessageForm() {
     }
   }
 
+  const handleKeyDown = event => {
+    if (event.ctrlKey && event.keyCode === 13) {
+      handleSubmit();
+    }
+
+    if (content) {
+      console.log('1');
+      typingRef
+        .child(chatRoom.id)
+        .child(user.uid)
+        .set(user.displayName);
+    } else {
+      console.log('2');
+
+      typingRef
+        .child(chatRoom.id)
+        .child(user.uid)
+        .remove();
+    }
+  }
+
   return (
     <div>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId='exampleForm.ControlTextarea1'>
           <Form.Control
+            onKeyDown={handleKeyDown}
             value={content}
             onChange={handleChange}
             as='textarea'

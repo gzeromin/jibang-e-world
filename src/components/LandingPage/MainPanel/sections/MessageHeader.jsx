@@ -9,6 +9,7 @@ import {
   FormControl,
   Image,
   InputGroup,
+  Media,
   Row
 } from 'react-bootstrap';
 import { FaLock, FaLockOpen } from 'react-icons/fa';
@@ -20,6 +21,8 @@ import firebase from '../../../../firebase';
 function MessageHeader({ handleSearchChange }) {
   const chatRoom = useSelector(state => state.chatRoom.currentChatRoom);
   const isPrivateChatRoom = useSelector(state => state.chatRoom.isPrivateChatRoom);
+  const userPosts = useSelector(state => state.chatRoom.userPosts);
+
   const [isFavorited, setIsFavorited] = useState(false);
   const usersRef = firebase.database().ref('users');
   const user = useSelector(state => state.user.userData);
@@ -30,12 +33,68 @@ function MessageHeader({ handleSearchChange }) {
   }, []);
 
   const addFavoriteListener = (chatRoomId, userId) => {
-
+    usersRef
+      .child(userId)
+      .child('favorited')
+      .once('value')
+      .then(data => {
+        if (data.val() !== null) {
+          const chatRoomIds = Object.keys(data.val());
+          const isAlreadyFavorited = chatRoomIds.includes(chatRoomId);
+          setIsFavorited(isAlreadyFavorited);
+        }
+      })
   }
 
   const handleFavorite = () => {
-
+    if (isFavorited) {
+      usersRef
+        .child(`${user.uid}/favorited`)
+        .child(chatRoom.id)
+        .remove(err => {
+          if (err !== null) {
+            console.error(err);
+          }
+        });
+    } else {
+      usersRef
+        .child(`${user.uid}/favorited`)
+        .update({
+          [chatRoom.id]: {
+            name: chatRoom.name,
+            description: chatRoom.description,
+            createdBy: {
+              name: chatRoom.createdBy.name,
+              image: chatRoom.createdBy.image
+            }
+          }
+        });
+    }
+    setIsFavorited(prev => !prev);
   }
+
+  const renderUserPosts = (userPosts) =>
+    Object.entries(userPosts)
+    .sort((a,b) => b[1].count - a[1].count)
+    .map(([key, val], i) => (
+      <Media key={i}>
+        <img
+          style={{ borderRadius: 25 }}
+          width={48}
+          height={48}
+          className='mr-3'
+          src={val.image}
+          alt={val.name}
+        />
+        <Media.Body>
+          <h6>{key}</h6>
+          <p>
+            {val.count} 개
+          </p>
+        </Media.Body>
+      </Media>
+    ));
+
   return (
     <div className='message-header'>
       <Container>
@@ -78,11 +137,17 @@ function MessageHeader({ handleSearchChange }) {
             </InputGroup>
           </Col>
         </Row>
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <p>
-            <Image src='' /> {' '} user name
-          </p>
-        </div>
+        {!isPrivateChatRoom &&
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <p>
+              <Image 
+                src={chatRoom && chatRoom.createdBy.image} 
+                roundedCircle
+                style={{ width: '30px', height: '30px'}}
+              /> {' '} {chatRoom && chatRoom.createdBy.name}
+            </p>
+          </div>
+        }
         <Row>
           <Col>
             <Accordion>
@@ -93,11 +158,11 @@ function MessageHeader({ handleSearchChange }) {
                     variant='link'
                     eventKey='0'
                   >
-                    Click me!
+                    Description
                   </Accordion.Toggle>
                 </Card.Header>
                 <AccordionCollapse eventKey='0'>
-                  <Card.Body>Hello! I'm the body</Card.Body>
+                  <Card.Body>{chatRoom && chatRoom.description}</Card.Body>
                 </AccordionCollapse>
               </Card>
             </Accordion>
@@ -111,11 +176,13 @@ function MessageHeader({ handleSearchChange }) {
                     variant='link'
                     eventKey='0'
                   >
-                    Click me!
+                    Posts Count
                   </Accordion.Toggle>
                 </Card.Header>
                 <AccordionCollapse eventKey='0'>
-                  <Card.Body>Hello! I'm the body</Card.Body>
+                  <Card.Body>
+                    { userPosts && renderUserPosts(userPosts)}
+                  </Card.Body>
                 </AccordionCollapse>
               </Card>
             </Accordion>
