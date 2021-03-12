@@ -1,0 +1,111 @@
+$width: 1001px;
+
+.private {
+  &-header {
+    width: $width;
+    height: 170px;
+    @extend %border;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    &-icon {
+      margin-bottom: 10px;
+    }
+  }
+
+  &-body {
+    width: $width;
+    margin-bottom: 1rem;
+
+    overflow-y: auto;
+  }
+
+  &-form {
+    display: flex;
+    &-button {
+      width: 100%;
+      background: $color-primary;
+      color: white;
+      text-transform: uppercase;
+      border: none;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      padding: 20px;
+      font-size: 16px;
+      font-weight: 100;
+      letter-spacing: 10px;
+      &:hover {
+        background-color: $color-focus;
+      }
+    }
+    .text {
+      margin: 1rem;
+      width: 785px;
+    }
+    .btn {
+      &-outter {
+        position: relative;
+        @extend %border;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        &-happy {
+          position: absolute;
+          font-size: 30px;
+          color: green;
+          top: 10px;
+          left: 85px;
+        }
+        &-yoga {
+          position: absolute;
+          font-size: 30px;
+          color: yellow;
+          top: 160px;
+          left: 85px;
+        }
+      }
+      &-inner {
+        position: relative;
+        @extend %border;
+        width: 100px;
+        height: 100px;
+        margin: 50px auto;
+        border-radius: 50%;
+        &-stamp {
+          position: absolute;
+          font-size: 60px;
+          top: 19px;
+          left: 19px;
+          color: green;
+        }
+      }
+    }
+  }
+
+  &-comment {
+
+  }
+}
+
+#calendar {
+  margin: 0 auto;
+  thead {
+    tr {
+      th {
+        text-align: center;
+        height: 30px;
+        width: 143px;
+        @extend %border;
+      }
+    }
+  }
+  tbody {
+    tr {
+      td {
+        padding: .3rem;
+        vertical-align: top;
+        height: 90px;
+        @extend %border;
+      }
+    }
+  }
+}

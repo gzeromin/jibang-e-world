@@ -27,3 +27,39 @@ $spinner-size: 6rem;
 .isNotLoading {
   display: none;
 }
+
+#app {
+  display: flex;
+  #nav {
+    width: 300px;
+    background-color: $color-primary;
+    padding: 2rem;
+    min-height: 100vh;
+    color: white;
+    min-width: 275px;
+    .sections {
+      &-title {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        &-prefix {
+          margin-right: 3px;
+        }
+        &-suffix {
+          position: absolute;
+          right: 0;
+          cursor: pointer;
+        }
+      }
+      &-contents {
+        list-style-type: none;
+        padding: 0;
+      }
+    }
+  }
+  #main {
+    width: 100%;
+    padding: 2rem 2rem 0 2rem;
+  }
+}

@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import { GiClover } from 'react-icons/gi';
 import { useDispatch, useSelector } from 'react-redux';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Image from 'react-bootstrap/Image';
@@ -26,17 +25,12 @@ function UserPanel() {
   }
 
   return (
-    <div>
-      {/* Logo */}
-      <h3>
-        <GiClover/> {' '}
-      </h3>
-
+    <div id='userPanel'>
       <div style={{ display: 'flex', marginBottom: '1rem' }}>
         <Image
           src={user && user.photoURL}
-          style={{ width: '30px', height: '30px', marginTop: '3px'}}
-          roundedCircle
+          style={{ width: '60px', height: '60px', marginTop: '3px'}}
+          rounded
         />
 
         <Dropdown>

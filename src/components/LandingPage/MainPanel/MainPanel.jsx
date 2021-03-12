@@ -6,6 +6,7 @@ import Message from './sections/Message';
 import { connect } from 'react-redux';
 import { setUserPosts } from '../../../redux/actions/chatRoom_action';
 import Skeleton from '../../../commons/components/Skeleton/Skeleton';
+import { keys } from 'mobx';
 
 export class MainPanel extends Component {
 
@@ -26,14 +27,31 @@ export class MainPanel extends Component {
   componentDidMount() {
     const { chatRoom } = this.props;
     if (chatRoom) {
+      let messagesArray = [];
+      this.state.messagesRef.child(chatRoom.id).get().then(snapshots => {
+        if (snapshots.exists()) {
+          for (let key in snapshots.val()) {
+            messagesArray.push(snapshots.val()[key]);
+          };
+        }
+        this.setState({
+          messages: messagesArray,
+          messagesLoading: false
+        });
+      }).catch(err => {
+        console.log(err);
+      })
       this.addMessagesListeners(chatRoom.id);
       this.addTypingListeners(chatRoom.id);
     }
   }
 
   componentDidUpdate() {
-    if (this.messageEndRef) {
-      this.messageEndRef.scrollIntoView({ behavior: 'smooth' });
+    const ref = this.messageEndRef;
+    if (ref) {
+      setTimeout(() => {
+        ref.scrollIntoView({ behavior: 'smooth' });
+      }, 400);
     }
   }
 

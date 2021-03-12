@@ -132,14 +132,11 @@ function MessageForm() {
     }
 
     if (content) {
-      console.log('1');
       typingRef
         .child(chatRoom.id)
         .child(user.uid)
         .set(user.displayName);
     } else {
-      console.log('2');
-
       typingRef
         .child(chatRoom.id)
         .child(user.uid)
